@@ -1,39 +1,45 @@
-import urllib.request
-import json
+class ExploringEcho:
+    def __init__(self):
+        self.name = "Exploring Echo"
+        self.features = [
+            "Real-time speech translation",
+            "Weather Forecast"
+            "Explore Tourist Places",
+            "Explore Resorts and Hotels based on Your location",
+        ]
 
-def get_weather_data(api_key, location):
-    base_url = "http://api.weatherstack.com/current"
-    params = {
-        'access_key': api_key,
-        'query': location
-    }
+    def introduce(self):
+        intro_msg = (
+            f"Hello, I am {self.name}, your AI Travelling companion!\n"
+            f"I specialize in the following features:\n"
+        )
+        features_msg = "\n".join([f"- {feature}" for feature in self.features])
+        outro_msg = "\nHow can I assist you today?"
+        full_intro = intro_msg + features_msg + outro_msg
+        return full_intro
 
-    # Construct the URL with parameters
-    url = f"{base_url}?{'&'.join([f'{key}={value}' for key, value in params.items()])}"
+    def respond_to_user_input(self, user_input):
+        if "translate" in user_input.lower():
+            return "Sure, I can help with real-time speech translation. Please provide the text you'd like to translate."
+        elif "explore places" in user_input.lower():
+            return "Great! To explore places, please specify the location or ask for recommendations in a particular city."
+        elif "explore resorts and hotels" in user_input.lower():
+            return "Excellent choice! I can find resorts and hotels based on your location. Could you please share your current location or the destination you have in mind?"
+        elif "weather" in user_input.lower():
+            return "Yeah! Today's Weather is "
+        else:
+            return "I'm sorry, I didn't understand that. If you have a specific request, feel free to ask, and I'll do my best to assist you."
 
-    try:
-        # Make the API request
-        response = urllib.request.urlopen(url)
-        data = json.loads(response.read().decode('utf-8'))
-        return data
-    except urllib.error.URLError as e:
-        print(f"Error accessing the API: {e}")
-        return None
-
-def main():
-    api_key = '7d0df2528f4e5ee40342621af1a07768'
-    location = input("Enter the location: ")
-
-    # Get weather data
-    weather_data = get_weather_data(api_key, location)
-
-    if weather_data:
-        # Parse and display relevant information
-        temperature = weather_data['current']['temperature']
-        description = weather_data['current']['weather_descriptions'][0]
-        print(f"The current temperature in {location} is {temperature}°C, and the weather is {description}.")
-    else:
-        print("Unable to retrieve weather information.")
-
+# Example usage:
 if __name__ == "__main__":
-    main()
+    exploring_echo = ExploringEcho()
+    print(exploring_echo.introduce())
+
+    while True:
+        user_input = input("User: ")
+        if user_input.lower() == "exit":
+            print("Goodbye!")
+            break
+        response = exploring_echo.respond_to_user_input(user_input)
+        print(f"{exploring_echo.name}: {response}")
+
