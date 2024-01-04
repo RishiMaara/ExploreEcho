@@ -1,5 +1,7 @@
+import requests
+
 class ExploringEcho:
-    def __init__(self):
+    def __init__(self, weather_api_key):
         self.name = "Exploring Echo"
         self.features = [
             "Real-time speech translation",
@@ -7,8 +9,9 @@ class ExploringEcho:
             "Explore Tourist Places",
             "Explore Resorts and Hotels based on Your location",
         ]
+        self.weather_api_key = weather_api_key
         self.tourist_places_data = {
-            "Taj Mahal": {
+             "Taj Mahal": {
                 "Availability": "Open all days",
                 "specialization": "Historical Monument",
                 "Special_food": "Mughlai Cuisine",
@@ -27,7 +30,7 @@ class ExploringEcho:
                 "Availability": "4 a.m. to 11 p.m (IST)",
                 "specialization": "Golden Temple is considered to be the most important pilgrimage site amongst Sikhs",
                 "Special_food": " delicious Guru ka Langar at the common Gurudwara kitchen.",
-            },
+                   },
             "Qutub Minar, Delhi": {
                 "Availability": "Open all year",
                 "specialization": "Beaches",
@@ -66,14 +69,24 @@ class ExploringEcho:
         }
 
     def introduce(self):
-        intro_msg = (
-            f"Hello, I am {self.name}, your AI Travelling companion!\n"
-            f"I specialize in the following features:\n"
-        )
+        intro_msg = f"Hello, I am {self.name}, your AI travel companion! I specialize in the following features:"
         features_msg = "\n".join([f"- {feature}" for feature in self.features])
         outro_msg = "\nHow can I assist you today?"
-        full_intro = intro_msg + features_msg + outro_msg
+        full_intro = f"{intro_msg}\n{features_msg}\n{outro_msg}"
         return full_intro
+
+    def get_weather(self, city):
+        weather_url = f"http://api.weatherstack.com/current"
+        params = {
+            "access_key": self.weather_api_key,
+            "query": city
+        }
+        try:
+            response = requests.get(weather_url, params=params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            return f"Error fetching weather data: {e}"
 
     def respond_to_user_input(self, user_input):
         if "translate" in user_input.lower():
@@ -81,23 +94,36 @@ class ExploringEcho:
         elif "explore places" in user_input.lower():
             return "Great! To explore places, please specify the location or ask for recommendations in a particular city."
         elif "explore tourist places" in user_input.lower():
-            return "Sure! Here are some top tourist places in India: Pick one Out for Further Details\n" + ", ".join(self.tourist_places_data.keys())
+            return "Sure! Here are some top tourist places in India: Pick one for further details\n" + ", ".join(self.tourist_places_data.keys())
         elif "explore resorts and hotels" in user_input.lower():
             return "Excellent choice! I can find resorts and hotels based on your location. Could you please share your current location or the destination you have in mind?"
         elif "weather" in user_input.lower():
-            return "Yeah! Today's Weather is "
+            city = input("Please provide the city for weather forecast: ")
+            weather_data = self.get_weather(city)
+            if "error" in weather_data:
+                return f"Error fetching weather data: {weather_data['error']['info']}"
+            current_weather = weather_data.get("current", {})
+            return (
+                f"Weather Forecast for {city}:\n"
+                f"Temperature: {current_weather.get('temperature')}°C\n"
+                f"Description: {', '.join(current_weather.get('weather_descriptions', []))}\n"
+                f"Wind Speed: {current_weather.get('wind_speed')} km/h\n"
+                f"Humidity: {current_weather.get('humidity')}%"
+            )
         elif user_input in self.tourist_places_data:
             place_info = self.tourist_places_data[user_input]
             return (
                 f"{user_input}:\n"
                 f"Availability: {place_info['Availability']}\n"
                 f"Specialization: {place_info['specialization']}\n"
-               )
+                f"Special Food: {place_info['Special_food']}"
+            )
         else:
-            return "I'm sorry, I didn't understand that. If you have a specific request, feel free to ask, and I'll do my best to assist you. or else Ask me the above comments"
+            return "I'm sorry, I didn't understand that. If you have a specific request, feel free to ask, and I'll do my best to assist you. Or ask me about the features mentioned above."
 
 if __name__ == "__main__":
-    exploring_echo = ExploringEcho()
+    weather_api_key = "e9e247e355d3a22b3dd07ea30bcbfe25"  # Replace with your actual Weatherstack API key
+    exploring_echo = ExploringEcho(weather_api_key)
     print(exploring_echo.introduce())
 
     while True:
