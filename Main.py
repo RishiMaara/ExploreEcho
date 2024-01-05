@@ -1,4 +1,5 @@
 import requests
+import webbrowser
 
 class ExploringEcho:
     def __init__(self, weather_api_key):
@@ -76,7 +77,7 @@ class ExploringEcho:
         return full_intro
 
     def get_weather(self, city):
-        weather_url = f"http://api.weatherstack.com/current"
+        weather_url = "http://api.weatherstack.com/current"
         params = {
             "access_key": self.weather_api_key,
             "query": city
@@ -88,6 +89,9 @@ class ExploringEcho:
         except requests.exceptions.RequestException as e:
             return f"Error fetching weather data: {e}"
 
+    def explore_make_my_trip(self):
+        webbrowser.open("https://www.makemytrip.com/hotels/")
+
     def respond_to_user_input(self, user_input):
         if "translate" in user_input.lower():
             return "Sure, I can help with real-time speech translation. Please provide the text you'd like to translate."
@@ -96,7 +100,8 @@ class ExploringEcho:
         elif "explore tourist places" in user_input.lower():
             return "Sure! Here are some top tourist places in India: Pick one for further details\n" + ", ".join(self.tourist_places_data.keys())
         elif "explore resorts and hotels" in user_input.lower():
-            return "Excellent choice! I can find resorts and hotels based on your location. Could you please share your current location or the destination you have in mind?"
+            self.explore_make_my_trip()
+            return "Sure! Redirecting you to MakeMyTrip for exploring resorts and hotels."
         elif "weather" in user_input.lower():
             city = input("Please provide the city for weather forecast: ")
             weather_data = self.get_weather(city)
@@ -122,14 +127,14 @@ class ExploringEcho:
             return "I'm sorry, I didn't understand that. If you have a specific request, feel free to ask, and I'll do my best to assist you. Or ask me about the features mentioned above."
 
 if __name__ == "__main__":
-    weather_api_key = "e9e247e355d3a22b3dd07ea30bcbfe25"  # Replace with your actual Weatherstack API key
+    weather_api_key = "e9e247e355d3a22b3dd07ea30bcbfe25" 
     exploring_echo = ExploringEcho(weather_api_key)
     print(exploring_echo.introduce())
 
     while True:
         user_input = input("User: ")
         if user_input.lower() == "exit":
-            print("Goodbye!")
+            print("Thanks For using ExploreEcho. Wishing you all the best for your Journey!")
             break
         response = exploring_echo.respond_to_user_input(user_input)
         print(f"{exploring_echo.name}: {response}")
