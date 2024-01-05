@@ -32,7 +32,7 @@ class ExploringEcho:
                 "specialization": "Golden Temple is considered to be the most important pilgrimage site amongst Sikhs",
                 "Special_food": " delicious Guru ka Langar at the common Gurudwara kitchen.",
                    },
-            "Qutub Minar, Delhi": {
+        "Qutub Minar": {
                 "Availability": "Open all year",
                 "specialization": "Beaches",
                 "Special_food": "Fish Curry and Rice",
@@ -94,12 +94,12 @@ class ExploringEcho:
 
     def respond_to_user_input(self, user_input):
         if "translate" in user_input.lower():
-            return "Sure, I can help with real-time speech translation. Please provide the text you'd like to translate."
+            return "Authorize AI access to audio permissions for real-time transcription and translation services."
         elif "explore places" in user_input.lower():
             return "Great! To explore places, please specify the location or ask for recommendations in a particular city."
         elif "explore tourist places" in user_input.lower():
             return "Sure! Here are some top tourist places in India: Pick one for further details\n" + ", ".join(self.tourist_places_data.keys())
-        elif "explore resorts and hotels" in user_input.lower():
+        elif "explore resorts and hotels,"in user_input.lower():
             self.explore_make_my_trip()
             return "Sure! Redirecting you to MakeMyTrip for exploring resorts and hotels."
         elif "weather" in user_input.lower():
@@ -127,7 +127,7 @@ class ExploringEcho:
             return "I'm sorry, I didn't understand that. If you have a specific request, feel free to ask, and I'll do my best to assist you. Or ask me about the features mentioned above."
 
 if __name__ == "__main__":
-    weather_api_key = "e9e247e355d3a22b3dd07ea30bcbfe25" 
+    weather_api_key = "e9e247e355d3a22b3dd07ea30bcbfe25"
     exploring_echo = ExploringEcho(weather_api_key)
     print(exploring_echo.introduce())
 
